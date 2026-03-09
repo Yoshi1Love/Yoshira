@@ -1,3 +1,4 @@
+import subprocess
 import json
 import os
 import discord
@@ -75,6 +76,17 @@ BLACKJACK_GAMES_FILE = os.path.join(DATA_FOLDER, 'blackjack_games.json')
 
 if not os.path.exists(DATA_FOLDER):
     os.makedirs(DATA_FOLDER, exist_ok=True)
+
+def install_requirements():
+    """Автоматическая установка зависимостей при запуске"""
+    required = {'yt-dlp', 'discord.py', 'PyNaCl'}
+    installed = {pkg.split('==')[0] for pkg in 
+                 subprocess.check_output([sys.executable, '-m', 'pip', 'freeze']).decode().splitlines()}
+    
+    missing = required - installed
+    if missing:
+        print(f"Установка недостающих пакетов: {missing}")
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', *missing])
 
 def save_status(status_type, activity_type, activity_message):
     """Сохраняет текущий статус в файл"""
